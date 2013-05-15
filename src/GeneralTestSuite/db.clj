@@ -71,7 +71,10 @@
   [connection sql-str]
   (j/with-connection connection
     (j/with-query-results result [sql-str]
-      (println result))))
+      ; convert result to map
+      ;(doseq [rs result]  (println rs))
+      (cons [] result)
+      )))
 
 (defn get-usable-accounts 
   "Not implemented"
@@ -84,5 +87,7 @@
   (doseq [r result]
     ;; TODO Add ids to a set and return
     ;; Use only immutable intermidiate data 
+    (println  r)
     nil
-    )))
+    )
+  ))
