@@ -73,21 +73,32 @@
     (j/with-query-results result [sql-str]
       ; convert result to map
       ;(doseq [rs result]  (println rs))
-      (cons [] result)
+      result
       )))
+
+(defn query-for-selections
+  "Query all tradable selections from a database connection"
+  []
+  (let [connection (conn pool-ora) 
+        sql-str "select t.tradingitemid tid from t_tradingitem t inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status in (1,2,3,4,5,6,7,8)"]
+  (j/with-connection connection
+    (j/with-query-results result [sql-str]
+      ; convert result to map
+      (class (map :tid result))
+      ))))
 
 (defn get-usable-accounts 
   "Not implemented"
   [] nil)
 (defn get-selections 
-  "Get tradable selections"
+  "Get tradable selections, NOT WORKING"
   []
-  (let [result (query (conn pool-ora) 
-                 "select t.tradingitemid tid from t_tradingitem t inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status in (1,2,3,4,5,6,7,8)")]
+  (let [result (doall (query  
+                 "select t.tradingitemid tid from t_tradingitem t inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status in (1,2,3,4,5,6,7,8)"))]
   (doseq [r result]
     ;; TODO Add ids to a set and return
     ;; Use only immutable intermidiate data 
     (println  r)
-    nil
+    ;nil
     )
   ))
