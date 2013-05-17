@@ -20,4 +20,5 @@
 [mysql/mysql-connector-java "5.1.12"]
 [org.clojure/data.json "0.2.2"]
 [clamq/clamq-activemq "0.4"]
-[org.apache.activemq/activemq-core "5.5.1"]])
+[org.apache.activemq/activemq-core "5.5.1"]
+[digest "1.3.0"]])

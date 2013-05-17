@@ -49,7 +49,7 @@
                             "{'orders':[{'type':3,'direction':1,'price':0.98,'stake':100, 'sel_id':4878,'expire':3},"
                             "{'type':1,'direction':1,'price':0.96,'stake':10000, 'sel_id':4894,'time_out':59},"
                             "{'type':3,'direction':1,'price':0.97,'stake':8000, 'sel_id':4902,'expire':3}]}"),
-   :order-push "orderManage.sv?act= pushOrder"
+   ;:order-push "orderManage.sv?act= pushOrder"
    ;; marketINfo.sv
    :list-markets "marketInfo.sv?",
    :list-markets-selection "marketInfo.sv?act=getSelections&param={sel_ids:[4682,4684,4580]}",

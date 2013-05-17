@@ -69,10 +69,9 @@
   (repeatedly  
     #(future (apply test-all [(assoc (:route-key login-routes) :log-location (str (swap! counter inc) "-" (:log-location (:route-key login-routes))))])))))
 
-
 (defn relazy
   "Create a lazy map of multithreaded requests, usage: 
-  -start threads: (def result (relazy :login-local-test 10))
+  -start threads: (def result (relazy :login-remote-test 2))
   -harvest results: (map deref result)"
   [route-key limit]
   (doall
@@ -85,7 +84,7 @@
   [ & ignored]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-          (let [result (relazy :login-local-stable 2)]
+          (let [result (relazy :login-local-test 20)]
             (map deref result))))
   (println "Result code set: " @result-code-set)
 )
