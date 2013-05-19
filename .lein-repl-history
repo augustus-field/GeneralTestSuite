@@ -197,3 +197,8 @@ sdf-test
 (use :reload-all 'GeneralTestSuite.foresync)
 (write-dirinfo-log "." 1.7)
 (time (write-dirinfo-log "." 1.7))
+*ns*
+(use :reload-all 'GeneralTestSuite.foresync)
+(pprint (list-files "."))
+eix
+texit
