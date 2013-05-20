@@ -19,6 +19,12 @@
              :user "tflatown"
              :password "tflatown"})
 
+(def tt-db-remote {:classname "com.timesten.jdbc.TimesTenClientDriver"
+             :subprotocol "timesten"
+             :subname "client:dsn=Test_TT" 
+             :user "tflatown"
+             :password "tflatown"})
+
 ;mysql
 (def mysql-db {:classname "com.mysql.jdbc.Driver"
              :subprotocol "mysql"
@@ -51,6 +57,9 @@
   "Timesten connection pool"
   (delay (pool tt-db)))
 
+(def pool-tt-remote
+  (delay (pool tt-db-remote)))
+
 (defn conn
   "A connection from pool"
   [pool-db]
@@ -78,14 +87,19 @@
 
 (defn query-for-selections
   "Query all tradable selections from a database connection"
-  []
-  (let [connection (conn pool-ora) 
-        sql-str "select t.tradingitemid tid from t_tradingitem t inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status in (1,2,3,4,5,6,7,8)"]
+  [db-pool]
+  (let [connection (conn db-pool) 
+        sql-str (str "select t.tradingitemid tid from t_tradingitem t" 
+                     "inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status=7"
+                     "")]
   (j/with-connection connection
     (j/with-query-results result [sql-str]
       ; convert result to map
-      (class (map :tid result))
+      ; Use doall to prevent laziness, since db will close after evaluating this function.
+      (doall (map :tid result))
+      ;result
       ))))
+
 
 (defn get-usable-accounts 
   "Not implemented"
@@ -94,11 +108,10 @@
   "Get tradable selections, NOT WORKING"
   []
   (let [result (doall (query  
-                 "select t.tradingitemid tid from t_tradingitem t inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status in (1,2,3,4,5,6,7,8)"))]
+                 "select t.tradingitemid tid from t_tradingitem t inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status=7"))]
   (doseq [r result]
     ;; TODO Add ids to a set and return
     ;; Use only immutable intermidiate data 
     (println  r)
     ;nil
-    )
-  ))
+    )))

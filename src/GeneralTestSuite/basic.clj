@@ -84,7 +84,6 @@
   [ & ignored]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-          (let [result (relazy :login-local-test 20)]
+          (let [result (relazy :login-remote 1)]
             (map deref result))))
-  (println "Result code set: " @result-code-set)
-)
+  (println "Result code set: " @result-code-set))
