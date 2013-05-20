@@ -28,7 +28,7 @@
 ;mysql
 (def mysql-db {:classname "com.mysql.jdbc.Driver"
              :subprotocol "mysql"
-             :subname "//localhost:3306/mysql" 
+             :subname "//localhost:3306/test" 
              :user "root"
              :password "cern"})
 
@@ -56,6 +56,9 @@
 (def pool-tt
   "Timesten connection pool"
   (delay (pool tt-db)))
+
+(def pool-mysql
+  (delay (pool mysql-db)))
 
 (def pool-tt-remote
   (delay (pool tt-db-remote)))
@@ -100,6 +103,13 @@
       ;result
       ))))
 
+(defn query-mysql-test
+  []
+  (let [conn (conn pool-mysql)
+        sql-str (str "select * from t_intention")]
+    (j/with-connection conn
+      (j/with-query-results result [sql-str]
+        (doall (map :id result))))))
 
 (defn get-usable-accounts 
   "Not implemented"

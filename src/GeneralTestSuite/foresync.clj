@@ -84,9 +84,10 @@
 (defn list-files-concurr
   "List file information concurrently. 
   Usage: (def future-files (doall (list-files-concurr file-list)))
-  Note use doall to realize the map operation immediately."
+  Note use doall to realize the map operation immediately.
+  Need to deref to get actual values."
   [file-list]
-  (pmap get-file-info file-list))
+  (map get-file-info file-list))
 
 
 (defn list-files 
@@ -99,6 +100,16 @@
   []
   (let [sdf (SimpleDateFormat. timeformat)] 
                 (.format sdf (Date.))))
+
+(defn file-name-comparator
+  [first-info-map second-info-map]
+  (let [first-name (clojure.string/lower-case (:name first-info-map))
+        second-name (clojure.string/lower-case (:name second-info-map))]
+    (compare first-name second-name)))
+
+(defn sort-info-by-name
+  [file-info-seq]
+  (sort file-name-comparator file-info-seq))
 
 (defn write-dirinfo-log
   "Write dir information to log"
