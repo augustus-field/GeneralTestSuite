@@ -93,8 +93,7 @@
   [db-pool]
   (let [connection (conn db-pool) 
         sql-str (str "select t.tradingitemid tid from t_tradingitem t" 
-                     "inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status=7"
-                     "")]
+                     " inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status=7")]
   (j/with-connection connection
     (j/with-query-results result [sql-str]
       ; convert result to map

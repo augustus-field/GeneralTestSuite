@@ -10,10 +10,12 @@
           (sort-info-by-name
     (list-files dir))))
 
+
 ;; Copy a working folder to a location as archive files and a temp-working location
 (defn make-file-copy
   [dir]
-  (future (copy-files dir)))
+  ;(future (copy-files dir))
+  )
 
 (defn compare-file
   "Two files are identical only when they have 
@@ -26,7 +28,7 @@ Mark files that needs to be
 Data structure:
 \"{:name :location :size :md5sum :utag}" 
   [old-file-info new-file-info]
-  ))
+  )
 
 
 (defn get-diff-file-seq

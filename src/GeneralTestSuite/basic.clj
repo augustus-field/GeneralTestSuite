@@ -1,6 +1,7 @@
 (ns GeneralTestSuite.basic
    (:require [clj-http.client :as client])
    (:require [clojure.data.json :as json])
+   ;(:require [clojure.contrib.duck-streams :only (slurp*)])
    (:use [GeneralTestSuite.config :only [login-routes request-path]])
    (:use [GeneralTestSuite.util])
    )
@@ -84,6 +85,6 @@
   [ & ignored]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-          (let [result (relazy :login-remote 1)]
+          (let [result (relazy :login-local-ssl 1)]
             (map deref result))))
   (println "Result code set: " @result-code-set))
