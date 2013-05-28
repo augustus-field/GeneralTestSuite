@@ -24,10 +24,12 @@
 (defn sgfm-request 
   "Peform a request using the specified key defined in a login-map, return response body and writes logs"
   [key login-map]
-  (let [output (validate-sgfm-request* 
-                    (:base-url login-map)
-                    (key (request-path login-map)))] 
-	  (wrap-write-log (str 'param-path-key ">>" key ">>" (key (request-path login-map))) 
+  (let [request-path-for-key (key (request-path login-map))
+        request-base-path (:base-url login-map)
+        output (validate-sgfm-request* 
+                request-base-path
+                request-path-for-key)] 
+	  (wrap-write-log (str 'param-path-key ">>" key ">>" request-path-for-key) 
 	             login-map)
 	  (wrap-write-log (str output "\n") 
 	             login-map)
@@ -58,6 +60,17 @@
       (= pkey :login)
       (sgfm-request pkey login-map))))
 
+(defn test-all*
+  "Request all urls defined in param-path. Set to flag-clean to non-nil to append log in output"
+  [login-map test-keys]
+  (clean-log (:log-location login-map))
+  (println (str "Testing against:" (:base-url login-map) "\n" "Log location: " (:log-location login-map)))
+  (sgfm-request :login login-map)
+  (let [ks (remove #(some (partial = %) (cons :login-map test-keys))
+                   (keys (request-path login-map)))]
+    (doseq [pkey ks]
+    (sgfm-request pkey login-map))))
+
 ; Test-all in parallel using future, login-routes is chosen as a parameter
 (defn long-test [route-key] 
   (doseq [x (range 5)] 
@@ -70,6 +83,7 @@
   (repeatedly  
     #(future (apply test-all [(assoc (:route-key login-routes) :log-location (str (swap! counter inc) "-" (:log-location (:route-key login-routes))))])))))
 
+
 (defn relazy
   "Create a lazy map of multithreaded requests, usage: 
   -start threads: (def result (relazy :login-remote-test 2))
@@ -80,11 +94,20 @@
       #(future (apply test-all [(assoc (route-key login-routes) :log-location (str %1 %2 "-" (:log-location (route-key login-routes))))]))
       (range limit))))
 
+(defn relazy*
+  [route-key limit keys]
+  (doall
+    (map-indexed 
+      #(future (apply test-all*
+                      [(assoc (route-key login-routes) :log-location (str %1 %2 "-" (:log-location (route-key login-routes))))]
+                      keys))
+      (range limit))))
+
 (defn -main
   "Main testing function"
-  [ & ignored]
+  [ & args]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-          (let [result (relazy :login-local-ssl 1)]
+          (let [result (relazy* :login-local-test 1 '(:list-valid) )]
             (map deref result))))
   (println "Result code set: " @result-code-set))

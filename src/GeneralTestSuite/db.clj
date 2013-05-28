@@ -88,6 +88,7 @@
       result
       )))
 
+;; TODO Code duplication
 (defn query-for-selections
   "Query all tradable selections from a database connection"
   [db-pool]
@@ -101,6 +102,27 @@
       (doall (map :tid result))
       ;result
       ))))
+
+(defn query-for-order-ids
+  [db-pool login-name]
+  (let [connection (conn db-pool) 
+        sql-str (str "select t.intentionid oid from t_intention t inner join t_userinfo u on t.traderid=u.userid and  u.login_name='"
+                     login-name
+                     "' and intentionstatus=1")]
+  (j/with-connection connection
+    (j/with-query-results result [sql-str]
+      (doall (map :oid result))
+      ))))
+
+(defn query-for-match-ids
+  [db-pool]
+  (let [connection (conn db-pool) 
+        sql-str "select matchid from t_matchinfo where status in (3,4)"]
+  (j/with-connection connection
+    (j/with-query-results result [sql-str]
+      (doall (map :matchid result))
+      ))))
+
 
 (defn query-mysql-test
   []
