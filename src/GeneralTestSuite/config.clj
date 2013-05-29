@@ -38,19 +38,25 @@
 (defn get-rand-tradable-id [use-local-db]
   "Get a random tradable id from local or remote timesten server.
    NOT EFFICIENT, for small dataset only!"
-  (.toPlainString (rand-nth (if use-local-db 
+  (let [rs (if use-local-db 
     (query-for-selections pool-tt)
-    (query-for-selections pool-tt-remote)))))
+    (query-for-selections pool-tt-remote))]
+    (if (> (count rs) 0)
+      (.toPlainString (rand-nth rs)))))
 
 (defn get-rand-order-id [login-name use-local-db]
-  (.toPlainString (rand-nth (if use-local-db 
+  (let [rs (if use-local-db 
     (query-for-order-ids pool-tt login-name)
-    (query-for-order-ids pool-tt-remote login-name)))))  
+    (query-for-order-ids pool-tt-remote login-name))]
+    (if (> (count rs) 0)
+      (.toPlainString (rand-nth rs)))))  
 
 (defn get-rand-matchid [use-local-db]
-  (.toPlainString (rand-nth (if use-local-db 
+  (let [rs (if use-local-db 
     (query-for-match-ids pool-tt)
-    (query-for-match-ids pool-tt-remote)))))
+    (query-for-match-ids pool-tt-remote))]
+    (if (> (count rs) 0)
+      (.toPlainString (rand-nth rs)))))
 
 (defn request-path 
   "Request path construction using configurations passed in login-map "
