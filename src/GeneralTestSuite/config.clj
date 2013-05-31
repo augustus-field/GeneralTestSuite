@@ -64,38 +64,38 @@
   {:login (format "login.sv?param={'un':'%s','pwd':'%s'}" (login-map :name) (login-map :password)), 
    ;; orderManage.sv
    :list-valid (format "orderManage.sv?act=getValidOrderList&param={st_date:'%s', settled:'%s'}" (get-time-one-week-ago) (login-map :settled)),
-   :list-invalid (format "orderManage.sv?act=getInvalidOrderList&param={order_stas:[7,8],st_date:'%s', settled:'%s'}" (get-time-one-day-ago) (login-map :settled)),
-   :list-all-pending (format "orderManage.sv?act=getOrderList&param={st_date:'%s',order_sta:1}" (get-time-one-week-ago)),
-   :list-all-pending-no-args (str "orderManage.sv?act=getOrderList&param={}")
-   :list-all-settled (format "orderManage.sv?act=getOrderList&param={st_date:'%s',settled:'%s'}" (get-time-one-week-ago) (login-map :settled)),
-   :order-add (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':1.32,'stake':100, 'sel_id':%s}]}" 
-                      (get-rand-tradable-id (login-map :use-local-db))),
-   :order-update (format "orderManage.sv?act=updOrder&param={order_id:%s, price:1.77, stake:117}" 
-                          (get-rand-order-id (:name login-map)
-                                             (:use-local-db login-map)))
-   :order-add-with-expire (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':1.98,'stake':100, 'sel_id':%s,'time_out':10, 'expire':5}]}"
-                                  (get-rand-tradable-id (login-map :use-local-db))),
-   ;:order-undo "orderManage.sv?act=undoOrder",
-   :order-add-multiple (format (str "orderManage.sv?act=addOrder&param=" 
-                            "{'orders':[{'type':3,'direction':1,'price':1.23,'stake':100, 'sel_id':%s,'expire':12},"
-                            "{'type':1,'direction':1,'price':1.24,'stake':10000, 'sel_id':%s,'time_out':59},"
-                            "{'type':3,'direction':1,'price':1.68,'stake':8000, 'sel_id':%s,'expire':10}]}")
-                               (get-rand-tradable-id (login-map :use-local-db)) 
-                               (get-rand-tradable-id (login-map :use-local-db)) 
-                               (get-rand-tradable-id (login-map :use-local-db))), ; todo: ugly
-   ;:order-push "orderManage.sv?act= pushOrder"
-   ;; marketINfo.sv
-   :list-markets "marketInfo.sv?",
-   :list-single-market (format "marketInfo.sv?act=getMarket&param={'language':'zh','event_ids':[%s]}" (get-rand-matchid (:use-local-db login-map)))
-   :list-markets-selection (format "marketInfo.sv?act=getSelections&param={sel_ids:[%s,%s,%s]}"
-                                   (get-rand-tradable-id (login-map :use-local-db)) 
-                               (get-rand-tradable-id (login-map :use-local-db)) 
-                               (get-rand-tradable-id (login-map :use-local-db))), 
-   :list-leagues "marketInfo.sv?act=getLeague",
-   :list-markets-cond (format  "marketInfo.sv?act=getMarket&param={language:'EN','event_ids':[%s,%s],'ver_num':52}"
-                               (get-rand-matchid (:use-local-db login-map))
-                               (get-rand-matchid (:use-local-db login-map)))
-   :query-account (format "account.sv?param={'un':'%s'}" (login-map :name))
-   ;:get-hb "getHeart.sv?time_out=10"
-   :cancel-hb "getHeart.sv"
+   ;; :list-invalid (format "orderManage.sv?act=getInvalidOrderList&param={order_stas:[7,8],st_date:'%s', settled:'%s'}" (get-time-one-day-ago) (login-map :settled)),
+   ;; :list-all-pending (format "orderManage.sv?act=getOrderList&param={st_date:'%s',order_sta:1}" (get-time-one-week-ago)),
+   ;; :list-all-pending-no-args (str "orderManage.sv?act=getOrderList&param={}")
+   ;; :list-all-settled (format "orderManage.sv?act=getOrderList&param={st_date:'%s',settled:'%s'}" (get-time-one-week-ago) (login-map :settled)),
+   ;; :order-add (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':1.32,'stake':100, 'sel_id':%s}]}" 
+   ;;                    (get-rand-tradable-id (login-map :use-local-db))),
+   ;; :order-update (format "orderManage.sv?act=updOrder&param={order_id:%s, price:1.77, stake:117}" 
+   ;;                        (get-rand-order-id (:name login-map)
+   ;;                                           (:use-local-db login-map)))
+   ;; :order-add-with-expire (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':1.98,'stake':100, 'sel_id':%s,'time_out':10, 'expire':5}]}"
+   ;;                                (get-rand-tradable-id (login-map :use-local-db))),
+   ;; ;:order-undo "orderManage.sv?act=undoOrder",
+   ;; :order-add-multiple (format (str "orderManage.sv?act=addOrder&param=" 
+   ;;                          "{'orders':[{'type':3,'direction':1,'price':1.23,'stake':100, 'sel_id':%s,'expire':12},"
+   ;;                          "{'type':1,'direction':1,'price':1.24,'stake':10000, 'sel_id':%s,'time_out':59},"
+   ;;                          "{'type':3,'direction':1,'price':1.68,'stake':8000, 'sel_id':%s,'expire':10}]}")
+   ;;                             (get-rand-tradable-id (login-map :use-local-db)) 
+   ;;                             (get-rand-tradable-id (login-map :use-local-db)) 
+   ;;                             (get-rand-tradable-id (login-map :use-local-db))), ; todo: ugly
+   ;; ;:order-push "orderManage.sv?act= pushOrder"
+   ;; ;; marketINfo.sv
+   ;; :list-markets "marketInfo.sv?",
+   ;; :list-single-market (format "marketInfo.sv?act=getMarket&param={'language':'zh','event_ids':[%s]}" (get-rand-matchid (:use-local-db login-map)))
+   ;; :list-markets-selection (format "marketInfo.sv?act=getSelections&param={sel_ids:[%s,%s,%s]}"
+   ;;                                 (get-rand-tradable-id (login-map :use-local-db)) 
+   ;;                             (get-rand-tradable-id (login-map :use-local-db)) 
+   ;;                             (get-rand-tradable-id (login-map :use-local-db))), 
+   ;; :list-leagues "marketInfo.sv?act=getLeague",
+   ;; :list-markets-cond (format  "marketInfo.sv?act=getMarket&param={language:'EN','event_ids':[%s,%s],'ver_num':52}"
+   ;;                             (get-rand-matchid (:use-local-db login-map))
+   ;;                             (get-rand-matchid (:use-local-db login-map)))
+   ;; :query-account (format "account.sv?param={'un':'%s'}" (login-map :name))
+   ;; ;:get-hb "getHeart.sv?time_out=10"
+   ;; :cancel-hb "getHeart.sv"
    })

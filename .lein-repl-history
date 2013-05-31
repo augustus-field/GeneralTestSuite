@@ -1,8 +1,3 @@
-(def m [{:a 1 :b 2} {:a 4 :b 7}])
-m
-(update-in m (:a 2.2) +)
-(update-in m (:a 2.2) inc)
-(update-in m ( 2.2 :a) inc)
 (update-in m [ 2.2 :a] inc)
 m
 (doc update-in)
@@ -498,3 +493,8 @@ s
 (=  (count s) 0)
 (use :reload-all 'GeneralTestSuite.basic)
 (-main-all)
+(-main)
+(use :reload-all 'GeneralTestSuite.basic)
+(-main)
+(use :reload-all 'GeneralTestSuite.basic)
+(-main)

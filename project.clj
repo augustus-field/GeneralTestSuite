@@ -10,7 +10,8 @@
                  [clj-http "0.7.2"]
 ;                 [org.clojure/java.jdbc "0.2.0"]
                  [org.clojure/java.jdbc "0.3.0-alpha1"] 
-[c3p0 "0.9.1.2"]
+                 [c3p0 "0.9.1.2"]
+                 [cheshire "5.2.0"]
 [ojdbc "14"]
 [ttjdbc "6"]
 [org.slf4j/slf4j-api "1.5.6"]
@@ -22,3 +23,4 @@
 [clamq/clamq-activemq "0.4"]
 [org.apache.activemq/activemq-core "5.5.1"]
 [digest "1.3.0"]])
+                

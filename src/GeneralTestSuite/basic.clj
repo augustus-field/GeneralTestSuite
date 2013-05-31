@@ -61,11 +61,11 @@
       (sgfm-request pkey login-map))))
 
 (defn test-all*
-  [login-map test-keys]
+  [login-map]
   (clean-log (:log-location login-map))
   (println (str "Testing against:" (:base-url login-map) "\n" "Log location: " (:log-location login-map)))
   (sgfm-request :login login-map)
-  (let [ks (remove #(not (some (partial = %) (cons :login-map test-keys))) 
+  (let [ks (remove #(some (partial = %) (cons :login (:filter-keys login-map)))
                    (keys (request-path login-map)))]
     (doseq [pkey ks]
       (sgfm-request pkey login-map))))
@@ -80,8 +80,11 @@
    Note that it is not possible to force completion of all threads."
   (let [counter (atom 0N)]
   (repeatedly  
-    #(future (apply test-all [(assoc (:route-key login-routes) :log-location (str (swap! counter inc) "-" (:log-location (:route-key login-routes))))])))))
+    #(future (apply test-all
+                    [(assoc (:route-key login-routes) :log-location (str (swap! counter inc) "-" (:log-location (:route-key login-routes))))])))))
 
+
+;; map-indexed creats a map from two collections
 
 (defn relazy
   "Create a lazy map of multithreaded requests, usage: 
@@ -90,7 +93,8 @@
   [route-key limit]
   (doall
     (map-indexed 
-      #(future (apply test-all [(assoc (route-key login-routes) :log-location (str %1 %2 "-" (:log-location (route-key login-routes))))]))
+      #(future (apply test-all
+                      [(assoc (route-key login-routes) :log-location (str %1 %2 "-" (:log-location (route-key login-routes))))]))
       (range limit))))
 
 (defn relazy*
@@ -98,8 +102,9 @@
   (doall
     (map-indexed 
       #(future (apply test-all*
-                      [(assoc (route-key login-routes) :log-location (str %1 %2 "-" (:log-location (route-key login-routes))))]
-                      test-keys))
+                      [(assoc (route-key login-routes)
+                         :log-location (str %1 %2 "-" (:log-location (route-key login-routes)))
+                         :filter-keys test-keys)]))
       (range limit))))
 
 (defn -main
