@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: net.sf.opencsv:opencsv:2.0.1">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/sf/opencsv/opencsv/2.0.1/opencsv-2.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
