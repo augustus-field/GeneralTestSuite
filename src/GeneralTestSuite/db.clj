@@ -8,14 +8,14 @@
 ;; Oracle db
 (def ora-db {:classname "oracle.jdbc.driver.OracleDriver"
              :subprotocol "oracle"
-             :subname "thin:@172.17.108.42:1521:SGFM" 
+             :subname "thin:@172.17.110.19:1521:SGFM" 
              :user "tflatopt"
              :password "tflatopt"})
 
 ;timesten connection
 (def tt-db {:classname "com.timesten.jdbc.TimesTenClientDriver"
              :subprotocol "timesten"
-             :subname "client:dsn=TT" 
+             :subname "client:dsn=DEV_TT" 
              :user "tflatown"
              :password "tflatown"})
 
@@ -41,10 +41,10 @@
                (.setJdbcUrl (str "jdbc:" (:subprotocol spec) ":" (:subname spec)))
                (.setUser (:user spec))
                (.setPassword (:password spec))
-               (.setInitialPoolSize 5)
+               (.setInitialPoolSize 2)
                (.setMaxPoolSize 5)
                ;; expire excess connections after 30 minutes of inactivity:
-               (.setMaxIdleTimeExcessConnections (* 30 60))
+               (.setMaxIdleTimeExcessConnections (* 5 60))
                ;; expire connections after 3 hours of inactivity:
                (.setMaxIdleTime (* 3 60 60)))]
     {:datasource cpds}))
@@ -87,6 +87,7 @@
       ;(doseq [rs result]  (println rs))
       result
       )))
+;; TODO Should memoize these results to avoid quering db everytime
 
 ;; TODO Code duplication
 (defn query-for-selections
@@ -108,7 +109,7 @@
   (let [connection (conn db-pool) 
         sql-str (str "select t.intentionid oid from t_intention t inner join t_userinfo u on t.traderid=u.userid and  u.login_name='"
                      login-name
-                     "' and intentionstatus=1")]
+                     "' and intentionstatus=1 where rownum<50")]
   (j/with-connection connection
     (j/with-query-results result [sql-str]
       (doall (map :oid result))
@@ -117,7 +118,7 @@
 (defn query-for-match-ids
   [db-pool]
   (let [connection (conn db-pool) 
-        sql-str "select matchid from t_matchinfo where status in (3,4)"]
+        sql-str "select matchid from t_matchinfo where status in (3,4) and rownum<50"]
   (j/with-connection connection
     (j/with-query-results result [sql-str]
       (doall (map :matchid result))
