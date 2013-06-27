@@ -41,7 +41,47 @@
   (swap! logger
          (fn [oldlog]
            (let [newlog (doall (take max-log-entries (cons msg oldlog)))]
-             (with-open [wr writer-on log-file]
+             (with-open [wr  log-file]
                (binding [*out* wr]
                  (print newlog)
                  newlog))))))
+
+; factorial
+(defn fact
+  "Calculate factorial without optimization"
+  [n]
+  (if (< n 1)
+    1
+    (* n (fact (dec n)))))
+
+
+(defn fib
+  "Generate a lazy fibonacci sequence."
+  ([] (fib 0 1))
+  ([a b] (cons a (lazy-seq (fib b (+ a b))))))
+
+(defn range-check [min max]
+  (fn [num]
+    (and (> num min)
+         (< num max))))
+
+(defn indexed
+  [coll]
+  (map-indexed vector coll))
+
+(defn index-filter
+"Similar to indexOfAny method of StringUtils in Java"
+  [pred coll]
+  (when pred
+    (for [[idx elt] (indexed coll) :when (pred elt)]
+      idx)))
+
+(defn trmcoll
+  [pred coll]
+  (take-while pred (indexed coll)))
+
+(defn trmstr
+  [idx str]
+  (let [rs (trmcoll #(< (first %) idx)
+           (indexed str))]
+    (apply str (map second rs))))
