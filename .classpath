@@ -22,11 +22,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="con" path="ccw.LEININGEN_CONTAINER">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="GeneralTestSuite/target/native/linux/x86_64"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="classes">
 		<attributes>
 			<attribute name="optional" value="true"/>

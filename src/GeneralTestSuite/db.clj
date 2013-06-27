@@ -8,14 +8,14 @@
 ;; Oracle db
 (def ora-db {:classname "oracle.jdbc.driver.OracleDriver"
              :subprotocol "oracle"
-             :subname "thin:@172.17.108.42:1521:SGFM" 
+             :subname "thin:@172.17.110.19:1521:SGFM" 
              :user "tflatopt"
              :password "tflatopt"})
 
 ;timesten connection
 (def tt-db {:classname "com.timesten.jdbc.TimesTenClientDriver"
              :subprotocol "timesten"
-             :subname "client:dsn=TT" 
+             :subname "client:dsn=DEV_TT" 
              :user "tflatown"
              :password "tflatown"})
 
@@ -41,10 +41,10 @@
                (.setJdbcUrl (str "jdbc:" (:subprotocol spec) ":" (:subname spec)))
                (.setUser (:user spec))
                (.setPassword (:password spec))
-               (.setInitialPoolSize 5)
+               (.setInitialPoolSize 2)
                (.setMaxPoolSize 5)
                ;; expire excess connections after 30 minutes of inactivity:
-               (.setMaxIdleTimeExcessConnections (* 30 60))
+               (.setMaxIdleTimeExcessConnections (* 5 60))
                ;; expire connections after 3 hours of inactivity:
                (.setMaxIdleTime (* 3 60 60)))]
     {:datasource cpds}))
@@ -88,6 +88,7 @@
       result
       )))
 
+
 ;; TODO Code duplication
 (defn query-for-selections
   "Query all tradable selections from a database connection"
@@ -103,6 +104,10 @@
       ;result
       ))))
 
+; Wrap to memoize version of the time consuming-function
+(def query-for-selections
+  (memoize query-for-selections))
+
 (defn query-for-order-ids
   [db-pool login-name]
   (let [connection (conn db-pool) 
@@ -113,16 +118,19 @@
     (j/with-query-results result [sql-str]
       (doall (map :oid result))
       ))))
+(def query-for-order-ids
+  (memoize query-for-order-ids))
 
 (defn query-for-match-ids
   [db-pool]
   (let [connection (conn db-pool) 
-        sql-str "select matchid from t_matchinfo where status in (3,4)"]
+        sql-str "select matchid from t_matchinfo where status in (3,4) and rownum<50"]
   (j/with-connection connection
     (j/with-query-results result [sql-str]
       (doall (map :matchid result))
       ))))
-
+(def query-for-match-ids
+  (memoize query-for-match-ids))
 
 (defn query-mysql-test
   []
@@ -135,14 +143,4 @@
 (defn get-usable-accounts 
   "Not implemented"
   [] nil)
-(defn get-selections 
-  "Get tradable selections, NOT WORKING"
-  []
-  (let [result (doall (query  
-                 "select t.tradingitemid tid from t_tradingitem t inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status=7"))]
-  (doseq [r result]
-    ;; TODO Add ids to a set and return
-    ;; Use only immutable intermidiate data 
-    (println  r)
-    ;nil
-    )))
+

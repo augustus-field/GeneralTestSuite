@@ -1,7 +1,6 @@
 (ns GeneralTestSuite.util
    (:require [clj-http.client :as client])
-   (:require [clojure.data.json :as json])
-   )
+   (:require [clojure.data.json :as json]))
 
 
 
@@ -93,7 +92,7 @@
 (defn clean-log
   "Removes log file, exception will be ignored" 
   [filename]
-	 (println "Remvoing log: " filename "if exists.")
+;	 (println "Removing log: " filename "if exists.")
 	  (try 
 	    (clojure.java.io/delete-file filename)
 	    (catch Exception e)))

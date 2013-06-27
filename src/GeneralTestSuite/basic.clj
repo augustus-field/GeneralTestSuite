@@ -22,7 +22,7 @@
   (read-json-str  (str (sgfm-request* base-url param-path-value))))
 
 (defn sgfm-request 
-  "Peform a request using the specified key defined in a login-map, return response body and writes logs"
+  "Peform a request corresponding to the specified key, using profile specified in login-map, return response body and writes logs"
   [k login-map]
   (let [request-path-for-key (k (request-path login-map))
         request-base-path (:base-url login-map)
@@ -60,6 +60,9 @@
       (= pkey :login)
       (sgfm-request pkey login-map))))
 
+
+;; Filter keys out and test-all requests
+;; Simpler implementation exists using select-keys 
 (defn test-all*
   [login-map]
   (clean-log (:log-location login-map))
@@ -69,6 +72,7 @@
                    (keys (request-path login-map)))]
     (doseq [pkey ks]
       (sgfm-request pkey login-map))))
+
 
 ; Test-all in parallel using future, login-routes is chosen as a parameter
 (defn long-test [route-key] 
@@ -94,7 +98,9 @@
   (doall
     (map-indexed 
       #(future (apply test-all
-                      [(assoc (route-key login-routes) :log-location (str %1 %2 "-" (:log-location (route-key login-routes))))]))
+                      [(assoc (route-key login-routes) :log-location
+                              (str  %2 "-"
+                                   (:log-location (route-key login-routes))))]))
       (range limit))))
 
 (defn relazy*
@@ -103,16 +109,16 @@
     (map-indexed 
       #(future (apply test-all*
                       [(assoc (route-key login-routes)
-                         :log-location (str %1 %2 "-" (:log-location (route-key login-routes)))
+                         :log-location (str  %2 "-" (:log-location (route-key login-routes)))
                          :filter-keys test-keys)]))
       (range limit))))
 
 (defn -main
-  "Main testing function"
-  [ & args]
+  "Main testing function, removing keys not needed for testing"
+  [ & filtered-keys]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-          (let [result (relazy* :login-local-test 1 '(:list-valid) )]
+         (let [result (relazy* :login-local 5 (seq filtered-keys))]
             (map deref result))))
   (println "Result code set: " @result-code-set))
 
@@ -121,6 +127,6 @@
   [ & args]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-          (let [result (relazy :login-remote 1)]
+          (let [result (relazy :login-remote 200)]
             (map deref result))))
   (println "Result code set: " @result-code-set))

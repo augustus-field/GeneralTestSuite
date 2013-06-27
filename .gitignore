@@ -4,6 +4,7 @@
 /classes
 /checkouts
 /.settings
+/.idea
 pom.xml
 *.jar
 *.class
@@ -11,3 +12,5 @@ pom.xml
 .lein-failures
 .lein-plugins
 *.log
+*.eml
+*.iml
