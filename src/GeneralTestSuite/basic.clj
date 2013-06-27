@@ -98,7 +98,9 @@
   (doall
     (map-indexed 
       #(future (apply test-all
-                      [(assoc (route-key login-routes) :log-location (str %1 %2 "-" (:log-location (route-key login-routes))))]))
+                      [(assoc (route-key login-routes) :log-location
+                              (str  %2 "-"
+                                   (:log-location (route-key login-routes))))]))
       (range limit))))
 
 (defn relazy*
@@ -107,7 +109,7 @@
     (map-indexed 
       #(future (apply test-all*
                       [(assoc (route-key login-routes)
-                         :log-location (str %1 %2 "-" (:log-location (route-key login-routes)))
+                         :log-location (str  %2 "-" (:log-location (route-key login-routes)))
                          :filter-keys test-keys)]))
       (range limit))))
 
@@ -125,6 +127,6 @@
   [ & args]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-          (let [result (relazy :login-remote 5)]
+          (let [result (relazy :login-remote 200)]
             (map deref result))))
   (println "Result code set: " @result-code-set))

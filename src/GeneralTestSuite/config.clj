@@ -53,7 +53,7 @@
     (if (> (count rs) 0)
       (.toPlainString (rand-nth rs)))))
 
-(defn request-path
+(defn request-path-dummy
   "Request path construction using configurations passed in login-map "
   [login-map]
   {:login (format "login.sv?param={'un':'%s','pwd':'%s'}" (login-map :name) (login-map :password)), 
@@ -95,16 +95,18 @@
    })
 
 
-(defn request-path-dummy
+(defn request-path
   "Request path construction using configurations passed in login-map "
   [login-map]
-  {:login (format "login.sv?param={'un':'%s','pwd':'%s'}" (login-map :name) (login-map :password)), 
-   :list-valid (format "orderManage.sv?act=getValidOrderList&param={st_date:'%s', settled:'%s'}" (get-time-one-week-ago) (login-map :settled)),
-   :list-invalid (format "orderManage.sv?act=getInvalidOrderList&param={order_stas:[7,8],st_date:'%s', settled:'%s'}" (get-time-one-day-ago) (login-map :settled)),
-  :list-all-pending (format "orderManage.sv?act=getOrderList&param={st_date:'%s',order_sta:1}" (get-time-one-week-ago)),
-  :list-all-pending-no-args (str "orderManage.sv?act=getOrderList&param={}")
-   :list-all-settled (format "orderManage.sv?act=getOrderList&param={st_date:'%s',settled:'%s'}" (get-time-one-week-ago) (login-map :settled)),
-  :list-markets "marketInfo.sv?",
-  :list-leagues "marketInfo.sv?act=getLeague",
-  :query-account (format "account.sv?param={'un':'%s'}" (login-map :name))
-   })
+  {:login (format "login.sv?param={'un':'%s','pwd':'%s'}" (login-map :name) (login-map :password))
+   ;; :list-valid (format "orderManage.sv?act=getValidOrderList&param={st_date:'%s', settled:'%s'}" (get-time-one-week-ago) (login-map :settled)),
+  ;;  :list-invalid (format "orderManage.sv?act=getInvalidOrderList&param={order_stas:[7,8],st_date:'%s', settled:'%s'}" (get-time-one-day-ago) (login-map :settled)),
+  ;; :list-all-pending (format "orderManage.sv?act=getOrderList&param={st_date:'%s',order_sta:1}" (get-time-one-week-ago)),
+  ;; :list-all-pending-no-args (str "orderManage.sv?act=getOrderList&param={}")
+  ;;  :list-all-settled (format "orderManage.sv?act=getOrderList&param={st_date:'%s',settled:'%s'}" (get-time-one-week-ago) (login-map :settled)),
+  ;; :list-markets "marketInfo.sv?",
+  ;; :list-leagues "marketInfo.sv?act=getLeague",
+  ;; :query-account (format "account.sv?param={'un':'%s'}" (login-map :name))
+      :order-add (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':1.32,'stake':100, 'sel_id':%s}]}" 
+                       (get-rand-tradable-id (login-map :use-local-db)))  
+ })

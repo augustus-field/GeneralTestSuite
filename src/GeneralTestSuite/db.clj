@@ -87,7 +87,7 @@
       ;(doseq [rs result]  (println rs))
       result
       )))
-;; TODO Should memoize these results to avoid quering db everytime
+
 
 ;; TODO Code duplication
 (defn query-for-selections
@@ -104,16 +104,22 @@
       ;result
       ))))
 
+; Wrap to memoize version of the time consuming-function
+(def query-for-selections
+  (memoize query-for-selections))
+
 (defn query-for-order-ids
   [db-pool login-name]
   (let [connection (conn db-pool) 
         sql-str (str "select t.intentionid oid from t_intention t inner join t_userinfo u on t.traderid=u.userid and  u.login_name='"
                      login-name
-                     "' and intentionstatus=1 where rownum<50")]
+                     "' and intentionstatus=1")]
   (j/with-connection connection
     (j/with-query-results result [sql-str]
       (doall (map :oid result))
       ))))
+(def query-for-order-ids
+  (memoize query-for-order-ids))
 
 (defn query-for-match-ids
   [db-pool]
@@ -123,7 +129,8 @@
     (j/with-query-results result [sql-str]
       (doall (map :matchid result))
       ))))
-
+(def query-for-match-ids
+  (memoize query-for-match-ids))
 
 (defn query-mysql-test
   []
@@ -136,14 +143,4 @@
 (defn get-usable-accounts 
   "Not implemented"
   [] nil)
-(defn get-selections 
-  "Get tradable selections, NOT WORKING"
-  []
-  (let [result (doall (query  
-                 "select t.tradingitemid tid from t_tradingitem t inner join t_gaminginfo g on t.gamingid=g.gamingid and g.status=7"))]
-  (doseq [r result]
-    ;; TODO Add ids to a set and return
-    ;; Use only immutable intermidiate data 
-    (println  r)
-    ;nil
-    )))
+
