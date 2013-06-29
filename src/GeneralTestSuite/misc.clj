@@ -122,14 +122,27 @@
       (recur (if (< i min) i min) more)
       min)))
 
-(defn min-max [coll]
-  (loop [[one & more] coll
-         min one
-         max one]
-    (if more
-      (recur (next more) (if (> one two) two)
-             (if (> one two) one))
+(defn min-max-loop [one & more]
+  (loop [min one
+         max one
+         [one & more]  more]
+    (if one
+      (recur (if (< one min) one min)
+             (if (> one max) one max)
+             more)
       (assoc {} :min min :max max))))
+
+;; merge-with takes a function and multiple maps. It merges 
+;; these maps by applying the function continousely 
+(defn min-max [one & more]
+  (reduce (fn [result x] (->> result
+                              (merge-with min {:min x})
+                              (merge-with max {:max x})))
+          {:min one :max one}
+          more))
+;; Note difference between -> and ->>
+;; -> inserts the first expression x as the second item in the first form, while
+;; ->> inserts the first expression x as the last item in the first form
 
 
 (defn zipm-1 [keys vals]
