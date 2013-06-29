@@ -175,3 +175,47 @@
 
 (defn zipm-5 [keys vals]
   (into {} (map vector keys vals)))
+
+;;; Project euler
+(defn divides? [dividend divisor]
+  (zero? (rem dividend divisor)))
+
+(defn divides-all?
+"Test if all divisors can evenly divide dividends."
+  [dividend  & divisors]
+  (every? (partial divides? dividend) divisors))
+
+(defn divides-any?
+  "Returns a function that tests whether its arg can be evenly divided by
+any of nums."
+  [& nums]
+  (fn [arg] (boolean (some
+                       #(divides? arg %)
+                       nums))))
+
+;; Problem 1
+;; Multiples of 3 and 5
+;; If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
+;; Find the sum of all the multiples of 3 or 5 below 1000.
+(defn problem-1-solv
+  ([limit]
+     (loop [sum 0
+         n 1]
+    (if (< n limit)
+      (recur (if ((divides-any? 3 5) n)
+               (+ sum n) sum)
+             (inc n))
+      sum)))
+  ([] (problem-1-solv 10)))
+
+(defn problem-1-solv-by-filter
+  ([limit]
+     (apply + (filter (divides-any? 3 5) (range 1 limit))))
+  ([] (problem-1-solv-by-sum 10)))
+
+(defn problem-1-solv-by-threading
+  ([limit]
+     (->> (range 1 limit)
+          (filter (divides-any? 3 5))
+          (apply +)))
+  ([] (problem-1-solv-by-sum 10)))
