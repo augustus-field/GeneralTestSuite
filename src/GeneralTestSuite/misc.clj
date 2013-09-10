@@ -72,3 +72,52 @@
       (recur (if (< i min) i min) more)
       min)))
 
+;; JoC EXAMPLE
+
+(defmacro get-available-method-names
+         "Get the public method names of a class"
+         [class-name]
+         `(for [method# (.getMethods ~class-name)
+               :let [method-name# (.getName method#)]]
+           (prn method-name#)))
+
+(def frame (java.awt.Frame.))
+(.setSize frame (java.awt.Dimension. 200 200))
+(.setVisible frame true)
+(def gfx (.getGraphics frame))
+(prn (nil? gfx))
+(.fillRect gfx 100 100 50 50)
+(.setColor gfx (java.awt.Color.  255 182 0))
+(.fillRect gfx 150 50 75 50)
+
+(defn xors
+  "Create a seq of vectors of [x y x-bit-xor-y]"
+  [x-max y-max]
+  (for [x (range x-max) y (range y-max)]
+    [x y (bit-xor x y)]))
+
+(doseq [ [x y z] (xors 200 200) ]
+  (.setColor gfx (java.awt.Color. z z z ))
+  (.fillRect gfx x y 1 1))
+
+(defn clear-graphics
+  "Clear graphics"
+  [g]
+  (.clearRect g 0 0 200 200))
+
+(defn f-values
+  "Similar to xors, but use supplied function instead of bit-xor"
+  [f x-max y-max]
+  (for [x (range x-max)
+        y (range y-max)]
+      [x y (rem (f x y) 256)]))
+
+(defn draw-values
+  [f x-max y-max]
+  (clear-graphics gfx)
+  (.setSize frame (java.awt.Dimension. x-max y-max))
+  (doseq [[x y z] (f-values f x-max y-max)]
+    (.setColor gfx (java.awt.Color. z z z))
+    (.fillRect gfx x y 1 1)))
+
+(re-seq #"(\w)+\s+(\w+)" "searc in,context and ,convert to vectors")

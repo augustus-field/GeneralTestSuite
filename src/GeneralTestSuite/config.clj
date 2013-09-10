@@ -7,25 +7,32 @@
 (def login-routes
   "Map of login-maps, including request base address, login info and some configurations."
   ;; local 8084
-  {:login-local-direct {:name "fbbbcc001m", 
+  {:login-local-direct {:name "fbpapf000000001m", ;  fbbbcc001m
 	   :password "111111",
 	   :settled (str (rand-int 2)),
 	   :log-location "direct-output.log"
-     :base-url "http://172.17.110.22:8080/SgfmApi/"
+     :base-url "http://localhost:8084/SgfmApi/"
      :use-local-db true
      :suppress-console true}
   :login-local {:name "fbbbcc001m", 
 	   :password "111111",
 	   :settled (str (rand-int 2)),
 	   :log-location "nginx-output.log"
-     :base-url "http://172.17.110.22/SgfmApi/"
+     :base-url "http://172.17.110.22:8080/SgfmApi/"
      :use-local-db true
      :suppress-console true}
-   :login-remote {:name "fbpapf000000001m", 
+  :login-remote-test {:name "fbzhli001m", 
+	   :password "111111",
+	   :settled (str (rand-int 2)),
+     :log-location "remote-test-output.log"
+     :base-url "http://172.17.108.52:8088/SgfmApi/"
+     :use-local-db true
+     :suppress-console true}
+   :login-remote {:name "fbchli000m", 
 	   :password "111111",
 	   :settled (str (rand-int 2)),
 	   :log-location "remote-output.log"
-     :base-url "http://172.17.108.64:8080/SgfmApi/"
+     :base-url "http://localhost:8084/SgfmApi/"
      :use-local-db nil
      :suppress-console true}
 })
@@ -86,9 +93,9 @@
                               (get-rand-tradable-id (login-map :use-local-db)) 
                               (get-rand-tradable-id (login-map :use-local-db))), 
   :list-leagues "marketInfo.sv?act=getLeague",
-  :list-markets-cond (format  "marketInfo.sv?act=getMarket&param={language:'EN','event_ids':[%s,%s],'ver_num':52}"
-                              (get-rand-matchid (:use-local-db login-map))
-                              (get-rand-matchid (:use-local-db login-map)))
+  ;; :list-markets-cond (format  "marketInfo.sv?act=getMarket&param={language:'EN','event_ids':[%s,%s],'ver_num':52}"
+  ;;                             (get-rand-matchid (:use-local-db login-map))
+  ;;                             (get-rand-matchid (:use-local-db login-map)))
   :query-account (format "account.sv?param={'un':'%s'}" (login-map :name))
   ;;  :get-hb "getHeart.sv?time_out=10"
   ;; :cancel-hb "getHeart.sv"
@@ -107,6 +114,9 @@
   ;; :list-markets "marketInfo.sv?",
   ;; :list-leagues "marketInfo.sv?act=getLeague",
   ;; :query-account (format "account.sv?param={'un':'%s'}" (login-map :name))
-      :order-add (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':1.32,'stake':100, 'sel_id':%s}]}" 
-                       (get-rand-tradable-id (login-map :use-local-db)))  
- })
+      ;; :order-add (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':1.32,'stake':100, 'sel_id':%s}]}" 
+      ;;                  (get-rand-tradable-id (login-map :use-local-db)))
+   :order-add (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':1.79,'stake':11, 'sel_id':%s}]}" (get-rand-tradable-id (login-map :use-local-db)))  ;88744
+;;   :order-undo "orderManage.sv?act=undoOrder"
+;; :order-add-with-expire (format "orderManage.sv?act=addOrder&param={'orders':[{'type':3,'direction':2,'price':2.17,'stake':11, 'sel_id':14553689,'time_out':10, 'expire':60}]}") ;14553689 14553691
+   })

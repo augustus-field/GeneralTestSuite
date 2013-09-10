@@ -66,12 +66,25 @@
 (defn test-all*
   [login-map]
   (clean-log (:log-location login-map))
-  (println (str "Testing against:" (:base-url login-map) "\n" "Log location: " (:log-location login-map)))
+;  (println (str "Testing against:" (:base-url login-map) "\n" "Log location: " (:log-location login-map)))
   (sgfm-request :login login-map)
   (let [ks (remove #(some (partial = %) (cons :login (:filter-keys login-map)))
                    (keys (request-path login-map)))]
     (doseq [pkey ks]
-      (sgfm-request pkey login-map))))
+      (doseq [x (range 150)] ;; Each request will be sent multiple times
+            (sgfm-request pkey login-map)))))
+
+(defn test-all-add-orders*
+  [login-map]
+  (clean-log (:log-location login-map))
+;  (println (str "Testing against:" (:base-url login-map) "\n" "Log location: " (:log-location login-map)))
+  (sgfm-request :login login-map)
+  (let [ks (remove #(some (partial = %) (cons :login (:filter-keys login-map)))
+                   (keys (request-path login-map)))]
+    (doseq [x (range 200)] ;; Each request will be sent multiple times
+            (sgfm-request :order-add login-map))
+;    (sgfm-request :order-undo login-map)
+    ))
 
 
 ; Test-all in parallel using future, login-routes is chosen as a parameter
@@ -103,6 +116,7 @@
                                    (:log-location (route-key login-routes))))]))
       (range limit))))
 
+;; TODO future cached result 
 (defn relazy*
   [route-key limit test-keys]
   (doall
@@ -118,7 +132,7 @@
   [ & filtered-keys]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-         (let [result (relazy* :login-local 5 (seq filtered-keys))]
+         (let [result (relazy* :login-remote 10 (seq filtered-keys))]
             (map deref result))))
   (println "Result code set: " @result-code-set))
 
@@ -127,6 +141,6 @@
   [ & args]
   (reset! result-code-set #{})
   (time (doall ; Without doall, @result-code-set will return too early
-          (let [result (relazy :login-remote 200)]
+          (let [result (relazy :login-local-direct 10)]
             (map deref result))))
   (println "Result code set: " @result-code-set))
