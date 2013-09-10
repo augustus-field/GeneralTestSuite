@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Leiningen: incanter:netlib-java:0.9.4">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/incanter/netlib-java/0.9.4/netlib-java-0.9.4.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

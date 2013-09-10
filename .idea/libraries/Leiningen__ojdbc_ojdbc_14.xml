@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Leiningen: ojdbc:ojdbc:14">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/ojdbc/ojdbc/14/ojdbc-14.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

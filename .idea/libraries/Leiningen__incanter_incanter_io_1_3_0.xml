@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Leiningen: incanter:incanter-io:1.3.0">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/incanter/incanter-io/1.3.0/incanter-io-1.3.0.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

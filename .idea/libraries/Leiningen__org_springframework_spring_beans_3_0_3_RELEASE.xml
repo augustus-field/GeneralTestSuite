@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Leiningen: org.springframework:spring-beans:3.0.3.RELEASE">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/3.0.3.RELEASE/spring-beans-3.0.3.RELEASE.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

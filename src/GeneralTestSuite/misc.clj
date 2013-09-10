@@ -37,6 +37,56 @@
 (def logger (atom nil))
 (def max-log-entries 100)
 (def log-file (clojure.java.io/as-file "samplelog.log"))
+
+(defn log [msg]
+  (swap! logger
+         (fn [oldlog]
+           (let [newlog (doall (take max-log-entries (cons msg oldlog)))]
+             (with-open [wr  log-file]
+               (binding [*out* wr]
+                 (print newlog)
+                 newlog))))))
+
+; factorial
+(defn fact
+  "Calculate factorial without optimization"
+  [n]
+  (if (< n 1)
+    1
+    (* n (fact (dec n)))))
+
+
+(defn fib
+  "Generate a lazy fibonacci sequence."
+  ([] (fib 0 1))
+  ([a b] (cons a (lazy-seq (fib b (+ a b))))))
+
+(defn range-check [min max]
+  (fn [num]
+    (and (> num min)
+         (< num max))))
+
+(defn indexed
+  [coll]
+  (map-indexed vector coll))
+
+(defn index-filter
+"Similar to indexOfAny method of StringUtils in Java"
+  [pred coll]
+  (when pred
+    (for [[idx elt] (indexed coll) :when (pred elt)]
+      idx)))
+
+(defn trmcoll
+  [pred coll]
+  (take-while pred (indexed coll)))
+
+(defn trmstr
+  [idx str]
+  (let [rs (trmcoll #(< (first %) idx)
+           (indexed str))]
+    (apply str (map second rs))))
+
 ;; (defn log [msg]
 ;;   (swap! logger
 ;;          (fn [oldlog]
@@ -71,6 +121,7 @@
     (if i
       (recur (if (< i min) i min) more)
       min)))
+
 
 ;; JoC EXAMPLE
 
@@ -121,3 +172,101 @@
     (.fillRect gfx x y 1 1)))
 
 (re-seq #"(\w)+\s+(\w+)" "searc in,context and ,convert to vectors")
+
+(defn min-max-loop [one & more]
+  (loop [min one
+         max one
+         [one & more]  more]
+    (if one
+      (recur (if (< one min) one min)
+             (if (> one max) one max)
+             more)
+      (assoc {} :min min :max max))))
+
+;; merge-with takes a function and multiple maps. It merges 
+;; these maps by applying the function continousely 
+(defn min-max [one & more]
+  (reduce (fn [result x] (->> result
+                              (merge-with min {:min x})
+                              (merge-with max {:max x})))
+          {:min one :max one}
+          more))
+;; Note difference between -> and ->>
+;; -> inserts the first expression x as the second item in the first form, while
+;; ->> inserts the first expression x as the last item in the first form
+
+
+(defn zipm-1 [keys vals]
+  (loop [m {}
+         ks (seq keys)
+         vs (seq vals)]
+    (if (and ks vs)
+      (recur (assoc m (first ks) (first vs))
+             (next ks)
+             (next vs))
+      m)))
+
+(defn zipm-2 [keys vals]
+  (loop [m {}
+         [k & more-ks :as keys] (seq keys)
+         [v & more-vs :as vals] (seq vals)]
+    (if (and keys vals)
+      (recur (assoc m k v)
+             more-ks
+             more-vs)
+      m)))
+
+(defn zipm-3 [keys vals]
+  (reduce (fn [m [k v]] (assoc m k v))
+          {}
+          (map vector keys vals)))
+
+(defn zipm-4 [keys vals]
+  (apply hash-map (interleave keys vals)))
+
+(defn zipm-5 [keys vals]
+  (into {} (map vector keys vals)))
+
+;;; Project euler
+(defn divides? [dividend divisor]
+  (zero? (rem dividend divisor)))
+
+(defn divides-all?
+"Test if all divisors can evenly divide dividends."
+  [dividend  & divisors]
+  (every? (partial divides? dividend) divisors))
+
+(defn divides-any?
+  "Returns a function that tests whether its arg can be evenly divided by
+any of nums."
+  [& nums]
+  (fn [arg] (boolean (some
+                       #(divides? arg %)
+                       nums))))
+
+;; Problem 1
+;; Multiples of 3 and 5
+;; If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.
+;; Find the sum of all the multiples of 3 or 5 below 1000.
+(defn problem-1-solv
+  ([limit]
+     (loop [sum 0
+         n 1]
+    (if (< n limit)
+      (recur (if ((divides-any? 3 5) n)
+               (+ sum n) sum)
+             (inc n))
+      sum)))
+  ([] (problem-1-solv 10)))
+
+(defn problem-1-solv-by-filter
+  ([limit]
+     (apply + (filter (divides-any? 3 5) (range 1 limit))))
+  ([] (problem-1-solv-by-sum 10)))
+
+(defn problem-1-solv-by-threading
+  ([limit]
+     (->> (range 1 limit)
+          (filter (divides-any? 3 5))
+          (apply +)))
+  ([] (problem-1-solv-by-sum 10)))

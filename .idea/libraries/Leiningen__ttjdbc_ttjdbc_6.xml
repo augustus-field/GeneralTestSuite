@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Leiningen: ttjdbc:ttjdbc:6">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/ttjdbc/ttjdbc/6/ttjdbc-6.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

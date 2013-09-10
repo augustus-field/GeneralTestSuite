@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Leiningen: clamq:clamq-jms:0.4">
-    <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/clamq/clamq-jms/0.4/clamq-jms-0.4.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
